@@ -14,7 +14,8 @@ module.exports = app => {
     res.send(blog);
   });
 
-  app.get('/api/blogs', requireLogin, async (req, res) => {
+  app.get('/api/blogs',requireLogin, async (req, res) => {
+    console.log(req.user.id)
     const blogs = await Blog.find({ _user: req.user.id }).cache({
       key: req.user.id
     });
@@ -22,7 +23,7 @@ module.exports = app => {
     res.send(blogs);
   });
 
-  app.post('/api/blogs', requireLogin, cleanCache, async (req, res) => {
+  app.post('/api/blogs',requireLogin, cleanCache, async (req, res) => {
     const { title, content, imageUrl } = req.body;
 
     const blog = new Blog({
@@ -34,6 +35,7 @@ module.exports = app => {
 
     try {
       await blog.save();
+      console.log(blog)
       res.send(blog);
     } catch (err) {
       res.send(400, err);

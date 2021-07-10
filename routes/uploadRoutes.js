@@ -2,11 +2,12 @@ const AWS = require('aws-sdk');
 const uuid = require('uuid/v1');
 const requireLogin = require('../middlewares/requireLogin');
 const keys = require('../config/keys');
-
-const s3 = new AWS.S3({
-  accessKeyId: keys.accessKeyId,
-  secretAccessKey: keys.secretAccessKey
+AWS.config.update({
+  accessKeyId:  keys.accessKeyId,
+  secretAccessKey: keys.secretAccessKey,
+  region: "us-east-1"
 });
+const s3 = new AWS.S3();
 
 module.exports = app => {
   app.get('/api/upload', requireLogin, (req, res) => {
@@ -15,11 +16,15 @@ module.exports = app => {
     s3.getSignedUrl(
       'putObject',
       {
-        Bucket: 'my-blog-bucket-123',
+        Bucket: 'test-bucket-3535',
         ContentType: 'image/jpeg',
         Key: key
       },
-      (err, url) => res.send({ key, url })
+      
+      (err, url) => {
+        console.log(url)
+        res.send({ key, url })
+      }
     );
   });
 };
